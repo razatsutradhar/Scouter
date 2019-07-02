@@ -85,7 +85,7 @@ class Event {
     for (int i = matches.size()-1; i >= 0; i--) {
       for (Team t : matches.get(i).getAllOpponents()) {
         if (t!=null) {
-          if (t.getTimesCovered()<3) {
+          if (t.getTimesCovered()<3 && matches.get(i).getImportance() > 0) {
             t.increaseTimesCovered(); 
             println(t + "time covered increased");
           } else if (matches.get(i).getImportance() == 1) {
