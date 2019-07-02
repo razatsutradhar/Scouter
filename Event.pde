@@ -21,7 +21,6 @@ class Event {
     matches = new ArrayList();
     myMatches = new ArrayList();
     allOpponents = new ArrayList();
-    readResults(analyze(readURL("https://api.vexdb.io/v1/get_matches?sku="+myEvent.getSKU()+"&team="+myTeam.getTeamNumber())));
 
     for (ArrayList<String[]> strArr : analyze(readURL("https://api.vexdb.io/v1/get_teams?sku="+sku))) {            //loading in all teams
       if (strArr.size() > 2) {
@@ -55,6 +54,7 @@ class Event {
 
     for (Match m : myMatches) {                                                                            //adding my opponents from every match to my opponents list
       for (Team op : m.getOpponents()) {
+        op.setIsOpponent(true);
         allOpponents.add(op);
       }
     }
@@ -80,6 +80,21 @@ class Event {
       }
       if ( matches.get(m.getMatchNum()-1).round < 3)      
         matches.get(m.getMatchNum()-1).setImportance(5);            //setting my matches to high importance
+    }
+
+    for (int i = matches.size()-1; i >= 0; i--) {
+      for (Team t : matches.get(i).getAllOpponents()) {
+        if (t!=null) {
+          if (t.getTimesCovered()<3) {
+            t.increaseTimesCovered(); 
+            println(t + "time covered increased");
+          } else if (matches.get(i).getImportance() == 1) {
+            matches.get(i).setImportance(0);
+          }
+        }else{
+         println("null team"); 
+        }
+      }
     }
     for (Match m : matches) {
       println(m.getMatchNum() + "\t" + m.getImportance());

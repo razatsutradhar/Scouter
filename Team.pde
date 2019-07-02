@@ -14,6 +14,7 @@ class Team {
   ArrayList<ArrayList<String>> info = new ArrayList();
   ArrayList<Award> allAwards = new ArrayList();
   int timesCovered = 0;
+  boolean isOpponent = false;
   Team(String allInfo) {
 
     String[] shotgunned = allInfo.replace("\"", "").replace("result:[{", "").split(",");
@@ -135,5 +136,13 @@ class Team {
   int getTimesCovered(){
    return timesCovered;
   }
-
+  void increaseTimesCovered(){
+    timesCovered++;
+  }
+  boolean isOpponent(){
+   return isOpponent; 
+  }
+  void setIsOpponent(boolean b){
+   isOpponent = b; 
+  }
 }

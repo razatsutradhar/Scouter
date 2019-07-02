@@ -9,6 +9,7 @@ class Match {
   Button r2;
   Button b1;
   Button b2;
+  Team[] playingTeams = new Team[4];
   int round; //1 - practice || 2 - Qualificaction || 3 - Quarter Fin || 4 - Semi Fin || 5 - Final
   int matchImportance;
   int x = 700;
@@ -16,7 +17,7 @@ class Match {
   int w = 150;
   int h = 30;
   Match(ArrayList<String[]> arr) {
-   division = arr.get(2)[1];
+    division = arr.get(2)[1];
     matchNum = Integer.parseInt(arr.get(5)[1]);
     round = int(arr.get(2)[1]);
     red1 = (Team)myEvent.getMap().get(arr.get(7)[1]);
@@ -25,16 +26,21 @@ class Match {
     blue1 = (Team)myEvent.getMap().get(arr.get(11)[1]);
     blue2 = (Team)myEvent.getMap().get(arr.get(12)[1]);
 
+    playingTeams[0] = red1;
+    playingTeams[1] = red2;
+    playingTeams[2] = blue1;
+    playingTeams[3] = blue2;
+
     r1 = new Button(red1.getTeamNumber(), x, y, w, h, color(255, 100, 100));
     r1.setTeam(red1);
     r2 = new Button(red2.getTeamNumber(), x+160, y, w, h, color(255, 100, 100));
     r2.setTeam(red2);
-    
+
     b1 = new Button(blue1.getTeamNumber(), x+(160*2), y, w, h, color(100, 100, 255));
     b1.setTeam(blue1);   
     b2 = new Button(blue2.getTeamNumber(), x+(160*3), y, w, h, color(100, 100, 255));
     b2.setTeam(blue2);
-    
+
     matchImportance = 0;
   }
 
@@ -95,14 +101,24 @@ class Match {
     }  
     return false;
   }
+  ArrayList<Team> getAllOpponents() {
+    ArrayList<Team> opps = new ArrayList(); 
+
+    for (Team s : playingTeams) {
+      if (s.isOpponent()) {
+        opps.add(s);
+      }
+    }
+    return opps;
+  }
   void increaseImportance() {
     matchImportance++;
   }
   int getImportance() {
     return matchImportance;
   }
-  void setImportance(int imp){
-   matchImportance = imp;
-   println("Q" + matchNum + " importance set to " + matchImportance);
+  void setImportance(int imp) {
+    matchImportance = imp;
+    println("Q" + matchNum + " importance set to " + matchImportance);
   }
 }
