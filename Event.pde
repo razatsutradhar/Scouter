@@ -7,7 +7,7 @@ class Event {
   ArrayList<Match> matches = new ArrayList();
   ArrayList<Match> myMatches = new ArrayList();
   ArrayList<Team> allOpponents = new ArrayList();
-
+  ArrayList<Integer> scoutScheduleList = new ArrayList();
   Event(ArrayList<String[]> allInfo) {
     sku = allInfo.get(1)[1];
     robotEventKey = allInfo.get(2)[1];
@@ -21,6 +21,7 @@ class Event {
     matches = new ArrayList();
     myMatches = new ArrayList();
     allOpponents = new ArrayList();
+    scoutScheduleList = new ArrayList();
 
     for (ArrayList<String[]> strArr : analyze(readURL("https://api.vexdb.io/v1/get_teams?sku="+sku))) {            //loading in all teams
       if (strArr.size() > 2) {
@@ -87,7 +88,6 @@ class Event {
         if (t!=null) {
           if (t.getTimesCovered()<3 && matches.get(i).getImportance() > 0) {
             t.increaseTimesCovered(); 
-            println(t + "time covered increased");
           } else if (matches.get(i).getImportance() == 1) {
             matches.get(i).setImportance(0);
           }
@@ -96,8 +96,15 @@ class Event {
         }
       }
     }
+    
     for (Match m : matches) {
-      println(m.getMatchNum() + "\t" + m.getImportance());
+      if(m.getImportance() > 0){
+       scoutScheduleList.add(m.getMatchNum());
+      }
+    }
+    println("Schedule size: " + scoutScheduleList.size());
+    for(int i : scoutScheduleList){
+     println("q" + i); 
     }
   }
 

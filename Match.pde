@@ -119,6 +119,5 @@ class Match {
   }
   void setImportance(int imp) {
     matchImportance = imp;
-    println("Q" + matchNum + " importance set to " + matchImportance);
   }
 }
