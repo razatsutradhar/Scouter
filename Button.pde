@@ -12,7 +12,9 @@ class Button implements Drawable {
   int h;
   Event obj;
   Team t;
-  int tSize = 12;
+  int tSize = 20;
+  int lastTimeActivated = -1;
+
   Button(int x, int y, int w, int h, color c) {
     this.x = x;
     this.y = y;
@@ -68,6 +70,7 @@ class Button implements Drawable {
       rect(x, y, w, h);
 
       fill(0);
+      textSize(tSize);
       text(text, x+w/2, y+h/2);
     }
   }
@@ -75,32 +78,36 @@ class Button implements Drawable {
   void updateSelected() {
 
     if (isShown) { 
-
       if (mouseX > x && mouseX<x+w && mouseY > y && mouseY<y+h) {
-        isSelected = true;
-        // println("button pressed");
-        if (call !=null) {
-          try {
-            if (obj==null) {
-              //   println("invoked search");
-              println("button method start");
-              call.invoke(methodBank);   
-              println("button method end");
-              // println("finished search");
-            } else {
-              println("invoked setting the event");
-              runMethod();
-              println("finished setting the event");
+        int currentTime = millis();
+        if ((currentTime - lastTimeActivated)>300) {
+          isSelected = true;
+          // println("button pressed");
+          if (call !=null) {
+            try {
+              if (obj==null) {
+                //   println("invoked search");
+                println("button method start");
+                call.invoke(methodBank);   
+                println("button method end");
+                // println("finished search");
+              } else {
+                println("invoked setting the event");
+                runMethod();
+                println("finished setting the event");
+                
+              }
             }
+            catch(Exception e) {
+              println("button invoke error");
+            }
+          } else if (t != null) {
+            teamButton();
+          } else {
+            println("call DNe");
+            isSelected = false;
           }
-          catch(Exception e) {
-            println("button invoke error");
-          }
-        } else if (t != null) {
-          teamButton();
-        } else {
-          println("call DNe");
-          isSelected = false;
+          lastTimeActivated = currentTime;
         }
       }
     }
@@ -158,5 +165,8 @@ class Button implements Drawable {
   }
   void teamButton() {
     println(t.getTeamNumber());
+  }
+  void setColor(color c){
+   this.c = c; 
   }
 }

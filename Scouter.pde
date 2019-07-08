@@ -35,6 +35,13 @@ String scheduleAbsolutePath;
 String eventFolderPath;
 boolean doesEventExist = false;
 ListBox matchList;
+
+Button loadScheduleButton;
+int numOfScouters = 1;
+TextBox displayNumOfScouter;
+Button addAScouter;
+Button removeAScouter;
+
 void setup() {
 
   size(1500, 700);                   //size of the window
@@ -52,11 +59,11 @@ void setup() {
   matches = new Tab("Matches", 10);                  //create and place matches tab, used to see your matches and opponents
   allTabs.add(matches);
 
-  Tab notification = new Tab("Notifications", allTabs.get(allTabs.size()-1).getRightXValue()+5);       //create and place notification tab, used to notify before a match and analyze opponents
-  allTabs.add(notification);
+  Tab scheduleTab = new Tab("Schedules", allTabs.get(allTabs.size()-1).getRightXValue()+5);       //create and place schedule tab, used to notify before a match and analyze opponents
+  allTabs.add(scheduleTab);
 
-  Tab dock = new Tab("Dock", allTabs.get(allTabs.size()-1).getRightXValue()+5);                        //create and place dock tab, used to import pictures and video from scouting
-  allTabs.add(dock);
+  Tab dockTab = new Tab("Dock", allTabs.get(allTabs.size()-1).getRightXValue()+5);                        //create and place dock tab, used to import pictures and video from scouting
+  allTabs.add(dockTab);
 
   Tab review = new Tab("Review", allTabs.get(allTabs.size()-1).getRightXValue()+5);                    //create and place review tab, used to review teams and review scounting material
   allTabs.add(review);
@@ -109,7 +116,7 @@ void setup() {
   setMethod(openSearchedEvent, "selectExistingEvent");
   textAlign(CENTER, CENTER);
 
-
+  
 
   matchList = cp5.addListBox("Matches")
     .setPosition(50, 100)
@@ -125,6 +132,18 @@ void setup() {
   matchList.getCaptionLabel().setFont(createFont("Calibri", 20));
   matchList.getValueLabel().setFont(createFont("Calibri", 15));
   matches.addControlObj(matchList);
+  
+  loadScheduleButton = new Button("Load Scouting Schedule", 50, 100, 300,30, color(255), 20);
+    setMethod(loadScheduleButton, "createScoutingSchedule");
+    dockTab.addObj(loadScheduleButton);
+  addAScouter = new Button("+", 300, 150, 50, 50, color(255), 20);
+    setMethod(addAScouter, "increaseScouterNumber");
+    dockTab.addObj(addAScouter);
+  removeAScouter = new Button("-", 50, 150, 50, 50, color(255), 20);
+    setMethod(removeAScouter, "decreaseScouterNumber");
+    dockTab.addObj(removeAScouter);
+  displayNumOfScouter = new TextBox(""+numOfScouters, 150, 150, 100, 50, color(255));
+    dockTab.addObj(displayNumOfScouter);
 }
 
 void draw() {
@@ -242,13 +261,13 @@ void mousePressed() {
   yearDDL.update();
   monthDDL.update();
   dateDDL.update();
-  for (Tab t : allTabs) {
-    if (t.isSelected()) {
-      for (Drawable d : t.getAllObjs()) {
-        d.updateSelected();
-      }
-    }
-  }
+  //for (Tab t : allTabs) {
+  //  if (t.isSelected()) {
+  //    for (Drawable d : t.getAllObjs()) {
+  //      d.updateSelected();
+  //    }
+  //  }
+  //}
 
   if (search.isSelected()) {
     for (Drawable d : eventButtons) {

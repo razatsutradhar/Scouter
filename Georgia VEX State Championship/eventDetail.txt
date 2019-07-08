@@ -1,0 +1,3 @@
+sku : RE-VRC-18-5113
+name : Georgia VEX State Championship
+team : 675C

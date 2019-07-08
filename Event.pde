@@ -8,6 +8,7 @@ class Event {
   ArrayList<Match> myMatches = new ArrayList();
   ArrayList<Team> allOpponents = new ArrayList();
   ArrayList<Integer> scoutScheduleList = new ArrayList();
+
   Event(ArrayList<String[]> allInfo) {
     sku = allInfo.get(1)[1];
     robotEventKey = allInfo.get(2)[1];
@@ -60,7 +61,6 @@ class Event {
       }
     }
     println(5);
-    createSchedule();
   }
 
 
@@ -70,8 +70,9 @@ class Event {
     }
   }
   void createSchedule() {                                         //creates the schedule for mataches to go see and record
-
+    scoutScheduleList.clear();
     for (Match m : myMatches) {                                   //increment the importance of each match    
+      m.setImportance(0);
       for (int i = 0; i < m.getMatchNum()-1; i++) {
         for (Team t : m.getOpponents()) {
           if (matches.get(i).hasOpponent(t)) {
@@ -87,24 +88,24 @@ class Event {
       for (Team t : matches.get(i).getAllOpponents()) {
         if (t!=null) {
           if (t.getTimesCovered()<3 && matches.get(i).getImportance() > 0) {
-            t.increaseTimesCovered(); 
+            t.increaseTimesCovered();
           } else if (matches.get(i).getImportance() == 1) {
             matches.get(i).setImportance(0);
           }
-        }else{
-         println("null team"); 
+        } else {
+          println("null team");
         }
       }
     }
-    
+
     for (Match m : matches) {
-      if(m.getImportance() > 0){
-       scoutScheduleList.add(m.getMatchNum());
+      if (m.getImportance() > 0) {
+        scoutScheduleList.add(m.getMatchNum());
       }
     }
     println("Schedule size: " + scoutScheduleList.size());
-    for(int i : scoutScheduleList){
-     println("q" + i); 
+    for (int i : scoutScheduleList) {
+      println("q" + i);
     }
   }
 

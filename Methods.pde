@@ -83,7 +83,7 @@ class Methods {
     if (!isFileSelectorOpen) {
       isFileSelectorOpen = true;
       try {
-        selectFolder("Locate Schedule", "folderSelected",new File("../"));
+        selectFolder("Locate Schedule", "folderSelected", new File("../"));
       }
       catch(Exception e) {
         println(e + " - selectEvent from file");
@@ -92,8 +92,8 @@ class Methods {
     }
     doesEventExist = false;
   }
-  void selectExistingEvent(){
-   doesEventExist = false; 
+  void selectExistingEvent() {
+    doesEventExist = false;
   }
   void createDuplicateEvent() {
     File dir = new File("./", myEvent.getName()+"-Duplicate");
@@ -107,13 +107,34 @@ class Methods {
     doesEventExist = false;
     eventSelected = true;
   }
-  
-  void showSelectedMatch(){
-  
+
+  void showSelectedMatch() {
   }
-  
-  void teamSelected(Object o){
+
+  void teamSelected(Object o) {
     println(((Team)o).getTeamName());
+  }
+
+  void createScoutingSchedule() {
+    myEvent.createSchedule(); 
+    if (myEvent.scoutScheduleList.size()>0) {
+      loadScheduleButton.setColor(color(0, 255, 55));
+    } else {
+      loadScheduleButton.setColor(color(255, 55, 0));
+    }
+  }
+
+  void increaseScouterNumber() {
+    if (numOfScouters<5) {
+      numOfScouters++; 
+      displayNumOfScouter.setText(""+numOfScouters);
+    }
+  }
+  void decreaseScouterNumber() {
+    if (numOfScouters>1) {
+      numOfScouters--; 
+      displayNumOfScouter.setText(""+numOfScouters);
+    }
   }
 }
 
