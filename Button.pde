@@ -1,4 +1,4 @@
-import java.lang.reflect.Method; //<>//
+import java.lang.reflect.Method; //<>// //<>//
 class Button implements Drawable {
   Method call;
 
@@ -164,9 +164,17 @@ class Button implements Drawable {
     this.t = t;
   }
   void teamButton() {
-    println(t.getTeamNumber());
+    showMediaAvailableForTeam();
   }
   void setColor(color c){
    this.c = c; 
+  }
+  void showMediaAvailableForTeam(){
+   if(t == null){
+    println("Error: this button does not have a team linked to it");
+   }else{
+    println(t.getTeamNumber());
+    availableMediaList.show(); 
+   }
   }
 }

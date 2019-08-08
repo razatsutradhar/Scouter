@@ -15,6 +15,14 @@ class Team {
   ArrayList<Award> allAwards = new ArrayList();
   int timesCovered = 0;
   boolean isOpponent = false;
+  
+  Team(String url, int i){
+    JSONObject js = loadJSONObject(url);
+    try{
+    teamNumber = js.getString("number");
+    println(teamNumber);
+    }catch(Exception e){}
+  }
   Team(String allInfo) {
 
     String[] shotgunned = allInfo.replace("\"", "").replace("result:[{", "").split(",");
@@ -70,6 +78,7 @@ class Team {
 
     //getAwards();
   }
+
   Team(ArrayList<String[]> info) {
     for (String[] s : info) {
       if (s[0].equals("number")) {

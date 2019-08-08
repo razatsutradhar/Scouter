@@ -10,9 +10,10 @@ class Match {
   Button b1;
   Button b2;
   Team[] playingTeams = new Team[4];
+  Button[] teamButtons = new Button[4];
   int round; //1 - practice || 2 - Qualificaction || 3 - Quarter Fin || 4 - Semi Fin || 5 - Final
   int matchImportance;
-  int x = 700;
+  int x = 600;
   int y = 100;
   int w = 150;
   int h = 30;
@@ -40,7 +41,14 @@ class Match {
     b1.setTeam(blue1);   
     b2 = new Button(blue2.getTeamNumber(), x+(160*3), y, w, h, color(100, 100, 255));
     b2.setTeam(blue2);
-
+    teamButtons[0] = r1;
+    teamButtons[1] = r2;
+    teamButtons[2] = b1;
+    teamButtons[3] = b2;
+    
+    for(Button b : teamButtons){
+      
+    }
     matchImportance = 0;
   }
 

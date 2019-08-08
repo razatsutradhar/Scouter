@@ -3,6 +3,12 @@ import java.io.*;
 import java.lang.reflect.Method;
 import controlP5.*;
 import java.util.*;
+import com.hamzeen.sms.*;
+import javax.*;
+
+SendSms sender;
+boolean messageSent;
+
 PImage icon; 
 static String matchSchedulePath;
 ArrayList<Tab> allTabs;              //array that holds all the 
@@ -42,6 +48,7 @@ TextBox displayNumOfScouter;
 Button addAScouter;
 Button removeAScouter;
 
+ListBox availableMediaList;
 void setup() {
 
   size(1500, 700);                   //size of the window
@@ -116,8 +123,6 @@ void setup() {
   setMethod(openSearchedEvent, "selectExistingEvent");
   textAlign(CENTER, CENTER);
 
-  
-
   matchList = cp5.addListBox("Matches")
     .setPosition(50, 100)
     .setSize(400, 500)
@@ -144,6 +149,23 @@ void setup() {
     dockTab.addObj(removeAScouter);
   displayNumOfScouter = new TextBox(""+numOfScouters, 150, 150, 100, 50, color(255));
     dockTab.addObj(displayNumOfScouter);
+  
+  availableMediaList = cp5.addListBox("Available Media:")
+    .setPosition(width-100, 150)
+    .setSize(50, 800)
+    .setItemHeight(50)
+    .setBarHeight(40)
+    .setColorBackground(color(255, 128))
+    .setColorActive(color(0))
+    .setColorForeground(color(0, 100, 255))
+    .setOpen(true)
+    .hide()
+    ;
+
+   org.apache.log4j.BasicConfigurator.configure();
+
+  // check the port which your device (modem/dongle) is attached & replace below.
+  sender = new SendSms("modem.com1", "COM3", 19200, "Huawei", "E220", "+17708731155");
 }
 
 void draw() {
@@ -276,6 +298,8 @@ void mousePressed() {
   }
 
   //println(monthDDL.getValue() + "   " + monthDDL.getItem((int)monthDDL.getValue()).get("value") + "    is updated: " + monthDDL.getId());
+    sender.sendMessage("+16788337013","Basiaclly made a bot to spam you everytime a press a key. If you are not naveen, I am so sorry");
+  messageSent = true;
 }
 
 void mouseReleased() {

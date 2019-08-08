@@ -64,12 +64,13 @@ class Event {
   }
 
 
-  void drayMyMatches() {
+  void drawMyMatches() {
     for (Map.Entry team : allTeams.entrySet()) {
       println("");
     }
   }
-  void createSchedule() {                                         //creates the schedule for mataches to go see and record
+  void createSchedule() {                                          //creates the schedule for mataches to go see and record
+  ArrayList<ArrayList<Integer>> scoutSchedule = new ArrayList();
     scoutScheduleList.clear();
     for (Match m : myMatches) {                                   //increment the importance of each match    
       m.setImportance(0);
@@ -107,6 +108,14 @@ class Event {
     for (int i : scoutScheduleList) {
       println("q" + i);
     }
+    for (int i = 0; i < numOfScouters; i++) {
+      ArrayList temp = new ArrayList<Integer>();
+      scoutSchedule.add(temp);
+    }
+    for(int index = 0; index<scoutScheduleList.size();index++){
+      scoutSchedule.get(index%numOfScouters).add(scoutScheduleList.get(index));
+    }
+    print(scoutSchedule);
   }
 
 
