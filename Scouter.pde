@@ -165,7 +165,7 @@ void setup() {
    org.apache.log4j.BasicConfigurator.configure();
 
   // check the port which your device (modem/dongle) is attached & replace below.
-  sender = new SendSms("modem.com1", "COM3", 19200, "Huawei", "E220", "+17708731155");
+  sender = new SendSms("modem.com1", "COM14", 19200, "Huawei", "E220", "+17708731155");
 }
 
 void draw() {
@@ -298,7 +298,7 @@ void mousePressed() {
   }
 
   //println(monthDDL.getValue() + "   " + monthDDL.getItem((int)monthDDL.getValue()).get("value") + "    is updated: " + monthDDL.getId());
-    sender.sendMessage("+16788337013","Basiaclly made a bot to spam you everytime a press a key. If you are not naveen, I am so sorry");
+    //sender.sendMessage("+16788337013","Basiaclly made a bot to spam you everytime a press a key. If you are not naveen, I am so sorry");
   messageSent = true;
 }
 
