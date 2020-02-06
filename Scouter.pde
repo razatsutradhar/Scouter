@@ -1,129 +1,236 @@
+///////////////////////////////////////////////////////////////////
+/*                    Scouter Main                               */ 
+/*This class houses all the void draw and setup function which   */
+/*braches out and works with all the other classes. This is the  */ 
+/*central hub of this entire app                                 */
+///////////////////////////////////////////////////////////////////
+
 import java.net.*;
 import java.io.*;
 import java.lang.reflect.Method;
 import controlP5.*;
 import java.util.*;
-import com.hamzeen.sms.*;
 import javax.*;
 
-SendSms sender;
+
 boolean messageSent;
 
 PImage icon; 
 static String matchSchedulePath;
-ArrayList<Tab> allTabs;              //array that holds all the 
-ArrayList<Button> allButtons;        //array of all button objects
-SearchBar teamSearch;                //search bar that you type your team name into, found under search tab        
-TextBox teamStats;                   //if a team is found from team search, this shows information on that team
-static Team searchTeam;              //the team object of the team found from the search query in search tab
-static Team myTeam;                  //global varaiable for my team. Can be set in the search tab
-Button setMyTeam;                    //button displayed after a valid team is found from a search query. Will set that team to "myTeam"
-Tab search;                          //first tab, labeled "search", used to loacte you team and the event
-static ControlP5 cp5;                //class for imported GUI
-Methods methodBank;                  //class to hold all public static method and to pass methods as a variable (read more in Methods)
-static DropdownList monthDDL;               //search tab, drop down list used to pick month of an event
-static DropdownList dateDDL;                //search tab, drop down list used to pick date of an event
-static DropdownList yearDDL;                //search tab, drop down list used to pick year of an event
-Button eventSearch;                  //use entered date to search for events on that day
+//array that holds all the 
+ArrayList<Tab> allTabs;              
+
+//array of all button objects
+ArrayList<Button> allButtons;  
+
+//search bar that you type your team name into, found under search tab      
+SearchBar teamSearch;         
+
+//if a team is found from team search, this shows information on that team
+TextBox teamStats;                 
+
+//the team object of the team found from the search query in search tab
+static Team searchTeam;           
+
+//global varaiable for my team. Can be set in the search tab
+static Team myTeam;     
+
+//button displayed after a valid team is found from a search query.
+//Will set that team to "myTeam"
+Button setMyTeam;               
+
+//first tab, labeled "search", used to loacte you team and the event
+Tab search;                      
+
+//class for imported GUI
+static ControlP5 cp5;         
+
+//class to hold all public static method and to pass methods as 
+//a variable (read more in Methods)
+Methods methodBank;                  
+
+//use entered date to search for events on that day
+Button eventSearch;         
+
+//All tabs
 Tab myTeamTab;
 Tab matches;
+Tab scheduleTab;
+
+//list that will house all buttons for events a team attends
 ArrayList<Button> eventButtons;
+
+//Event object that houses the event your team is currently in 
 Event myEvent;
-Table schedule;
+
+//all special button objects
 Button locateEvent;
 Button createEvent;
 Button createDuplicateEvent;
 Button openSearchedEvent;
+Button loadScheduleButton;
+Button addAScouter;
+Button removeAScouter;
+Button locateAScouter;
+
+//boolean (true false variables)
 boolean isFileSelectorOpen = false;
 boolean creatingAnEvent = false;
 boolean eventSelected = false;
 String scheduleAbsolutePath;
 String eventFolderPath;
 boolean doesEventExist = false;
+
+//Objects to display my matches
 ListBox matchList;
 
-Button loadScheduleButton;
+//integer that represents scouters
+//and display that number
 int numOfScouters = 1;
 TextBox displayNumOfScouter;
-Button addAScouter;
-Button removeAScouter;
 
+//varaibles and objects in the Dock Tab
 ListBox availableMediaList;
-void setup() {
+public ArrayList<File> currentFiles;
+File currentLocation = new File("./");
+ArrayList<Scout> allScouts = new ArrayList();
 
+
+///////////////////////////////////////////////////////////////////
+/*                    SETUP FUNCTION                             */ 
+/*This function is in the Main Scouter class and runs once at the*/
+/*beginning of the code. The purpose of this function is to      */ 
+/*initialize all variables and objects                           */
+///////////////////////////////////////////////////////////////////
+void setup() {
   size(1500, 700);                   //size of the window
   icon = loadImage("logopng.png");
   icon.resize(564, 564);
   surface.setIcon(icon);
-  allTabs = new ArrayList();         //Arraylist of all tabs found on the top edge
-  allButtons = new ArrayList();      //Arraylist of all buttons
+  
+  //Arraylist of all tabs found on the top edge
+  allTabs = new ArrayList();         
+  
+  //Arraylist of all buttons
+  allButtons = new ArrayList();  
+  
+  //Arraylist of all events a team is registered for
   eventButtons = new ArrayList();
-  methodBank = new Methods();        //Initializing a public method object to use all its methods
-  cp5 = new ControlP5(this);         //Initializing the imported GUI
+  
+  //Initializing a public method object to use all its methods
+  methodBank = new Methods();      
+  
+  //Initializing the imported GUI
+  cp5 = new ControlP5(this);         
 
-  search = new Tab("Create an Event", 10);    //Create and place the search tab
+  //Create and place the search tab, this tab will be 
+  //separated from the other because we want the user 
+  //to use this tab to unlock the rest
+  search = new Tab("Create an Event", 10);    
 
-  matches = new Tab("Matches", 10);                  //create and place matches tab, used to see your matches and opponents
+
+///////////////////////////////////////////////////////////////////
+/*         SETUP FUNCTION -- TAB INITIALIZATION                  */ 
+/*This function is in the Main Scouter class and runs once at the*/
+/*beginning of the code. The purpose of this function is to      */ 
+/*initialize all variables and objects                           */
+///////////////////////////////////////////////////////////////////
+
+  //create and place matches tab, used to see your matches and opponents
+  matches = new Tab("Matches", 10);                  
   allTabs.add(matches);
 
-  Tab scheduleTab = new Tab("Schedules", allTabs.get(allTabs.size()-1).getRightXValue()+5);       //create and place schedule tab, used to notify before a match and analyze opponents
+  //create and place schedule tab, used to notify before a match and analyze opponents
+  scheduleTab = new Tab("Schedules", allTabs.get(allTabs.size()-1).getRightXValue()+5);       
   allTabs.add(scheduleTab);
-
-  Tab dockTab = new Tab("Dock", allTabs.get(allTabs.size()-1).getRightXValue()+5);                        //create and place dock tab, used to import pictures and video from scouting
+  setMethod(scheduleTab, "showScheduleTab");
+  
+  //create and place dock tab, used to import pictures and video from scouting
+  Tab dockTab = new Tab("Dock", allTabs.get(allTabs.size()-1).getRightXValue()+5);                        
   allTabs.add(dockTab);
-
-  Tab review = new Tab("Review", allTabs.get(allTabs.size()-1).getRightXValue()+5);                    //create and place review tab, used to review teams and review scounting material
+  
+  //create and place review tab, used to review teams and review scounting material
+  Tab review = new Tab("Review", allTabs.get(allTabs.size()-1).getRightXValue()+5);                    
   allTabs.add(review);
 
-  myTeamTab = new Tab("My Team", allTabs.get(allTabs.size()-1).getRightXValue()+5);                //create and place my team tab tab, used to look at you team's stats
+  //create and place my team tab tab, used to look at you team's stats
+  myTeamTab = new Tab("My Team", allTabs.get(allTabs.size()-1).getRightXValue()+5);                
   allTabs.add(myTeamTab);
+  //using the drawMyTeamTab method from methodBank to customize the myTeam tab
+  setMethod(myTeamTab, "drawMyTeamTab");                      
+  
+///////////////////////////////////////////////////////////////////
+/*  SETUP FUNCTION -- RANDOM OBJECT INITIALIZATION               */ 
+/*This function is in the Main Scouter class and runs once at the*/
+/*beginning of the code. The purpose of this function is to      */ 
+/*initialize all variables and objects                           */
+///////////////////////////////////////////////////////////////////
 
-  setMethod(myTeamTab, "drawMyTeamTab");                                                               //using the drawMyTeamTab method from methodBank to customize the myTeam tab
-
-  teamSearch = new SearchBar(50, 100, 170, 30, "Team # + enter", "team_num=");                                 //create a search bar to search for a team number
-  search.addObj(teamSearch);                                                                           //and nest it in the search tab
-
-  teamStats = new TextBox(50, 260);                                                                    //create a text box for team stats which appears when a valid team is entered in the team seach bar
-  search.addObj(teamStats);                                                                            //add the team stat text box to the search tab 
+  //create a search bar to search for a team number
+  teamSearch = new SearchBar(50, 100, 170, 30, "Team # + enter", "team_num=");       
+  //and nest it in the search tab
+  search.addObj(teamSearch);                              
+  
+  //create a text box for team stats which appears when a valid team 
+  //is entered in the team seach bar
+  teamStats = new TextBox(50, 260);                     
+  
+  //add the team stat text box to the search tab
+  search.addObj(teamStats);                                                                             
   textAlign(RIGHT, TOP);
-  search.addObj(new TextBox("Search for a team: (required)", 50, 80));                                            //add text above the seach bar saying "Search for a Team" 
-  search.addObj(new TextBox("Select date of event (optional)", 600, 80));                                            //add text above the seach bar saying "Search for a Team" 
+  
+  //add text above the seach bar saying "Search for a Team"
+  search.addObj(new TextBox("Search for a team: (required)", 50, 80));                                            
   textAlign(CENTER, CENTER);
 
-  setMyTeam = new Button("Press to Confirm", 240, 100, 180, 30, color(255));                             //create a button that will set my team to a valid team searched in the team search box
-  setMethod(setMyTeam, "setAsMyTeam");                                                                 //set a method to set my team to searched team from method bank for the setMyTeam button
+  //create a button that will set my team to a valid team searched in the team search box
+  setMyTeam = new Button("Press to Confirm", 240, 100, 180, 30, color(255));      
+  //set a method to set my team to searched team from method bank for the setMyTeam button
+  setMethod(setMyTeam, "setAsMyTeam");                                                                 
 
-  yearDDL = cp5.addDropdownList("Year").setPosition(500, 100).setSize(150, 200);                        //create a dropdownlist for YEARS, customize it, and add it to the search tab
-  customizeNumberDDL(yearDDL, 2018, 2021);
-  search.addControlObj(yearDDL);
-
-  monthDDL = cp5.addDropdownList("Month").setPosition(680, 100).setSize(150, 200);                      //create a dropdownlist for MONTHS, customize it, and add it to the search tab
-  customizeMonthDDL(monthDDL);
-  search.addControlObj(monthDDL);
-
-  dateDDL = cp5.addDropdownList("Day").setPosition(860, 100).setSize(150, 200);                         //create a dropdownlist for DATES, customize it, and add it to the search tab
-  customizeNumberDDL(dateDDL, 1, 31);
-  search.addControlObj(dateDDL);
-
+  //Create a button with the text search that will search for registered competition
   eventSearch = new Button("Search", 1030, 100, 80, 30, color(255));
   setMethod(eventSearch, "eventSearchButton");
 
-
-  locateEvent = new Button("Open Existing Event", (width-(2*400))/2-200, height/2-30, 400, 60, color(255), 20);
+  //Create a button with the text "Open Existing Event" that will open file explorer
+  //and allow the user to select an event they have alreay started
+  locateEvent = new Button("Open Existing Event", (width-(2*400))/2-200, 
+  height/2-30, 400, 60, color(255), 20);
   setMethod(locateEvent, "selectEvent");
 
-  createEvent = new Button("Create New Event", width-((width-(2*400))/2)-400+100, height/2-30, 400, 60, color(255), 20);
+  //Create a button with the text "Create New Event" that 
+  //will let the user select an event they are 
+  //registered in and then unlock all the other tabs
+  createEvent = new Button("Create New Event", 
+  width-((width-(2*400))/2)-400+100, 
+  height/2-30, 400, 60, color(255), 20);
   setMethod(createEvent, "createAnEvent");
   //search.addObj(locateMatchSchedule);
 
-  createDuplicateEvent = new Button("Create Duplicate Event", width-((width-(2*400))/2)-400+200, height/2-30, 400, 60, color(255), 20);
+  //Create a button with the text "Create Duplicate Event" 
+  //that will let the user duplicate an event they have
+  //aready started
+  createDuplicateEvent = new Button("Create Duplicate Event", 
+  width-((width-(2*400))/2)-400+200, height/2-30, 400, 60, color(255), 20);
   setMethod(createDuplicateEvent, "createDuplicateEvent");
   
-  openSearchedEvent = new Button("Open Existing Event", (width-(2*400))/2-200, height/2-30, 400, 60, color(255), 20 );
+  //create a button that will allow the user to open an existing
+  //event if the user tried to create an event that already exists
+  openSearchedEvent = new Button("Open Existing Event", 
+  (width-(2*400))/2-200, height/2-30, 400, 60, color(255), 20 );
   setMethod(openSearchedEvent, "selectExistingEvent");
   textAlign(CENTER, CENTER);
+  
+  //create a button to find the file directory of a scouter
+  locateAScouter = new Button("Find Scouter", width/3, 
+  height/3, 400, 60, color(0,180, 30), 20);
+  setMethod(locateAScouter, "createAScouter");
 
+  //create dropdown list that lets the user review their
+  //only the matches they will be playing
   matchList = cp5.addListBox("Matches")
+  
+    //customize the dropdown list with color and sizes below
     .setPosition(50, 100)
     .setSize(400, 500)
     .setItemHeight(50)
@@ -134,50 +241,59 @@ void setup() {
     .setOpen(true)
     .hide()
     ;
+    
+  //set the fonts of the title and selections of the drop
+  //down list
   matchList.getCaptionLabel().setFont(createFont("Calibri", 20));
   matchList.getValueLabel().setFont(createFont("Calibri", 15));
   matches.addControlObj(matchList);
   
-  loadScheduleButton = new Button("Load Scouting Schedule", 50, 100, 300,30, color(255), 20);
+  //create a button that invokes a method that identifies 
+  //important matches to watch based on your schedule
+  loadScheduleButton = new Button("Load Scouting Schedule", 
+  50, 100, 300,30, color(255), 20);
     setMethod(loadScheduleButton, "createScoutingSchedule");
     dockTab.addObj(loadScheduleButton);
+    
+  //create a button that lets you increase the number of 
+  //scouters you have
   addAScouter = new Button("+", 300, 150, 50, 50, color(255), 20);
     setMethod(addAScouter, "increaseScouterNumber");
     dockTab.addObj(addAScouter);
+    
+  //create a button that lets you increase the number of 
+  //scouters you have
   removeAScouter = new Button("-", 50, 150, 50, 50, color(255), 20);
     setMethod(removeAScouter, "decreaseScouterNumber");
     dockTab.addObj(removeAScouter);
-  displayNumOfScouter = new TextBox(""+numOfScouters, 150, 150, 100, 50, color(255));
+  
+  //create a text box that displays the number of scouters you have
+  displayNumOfScouter = new TextBox(""+numOfScouters, 
+  150, 150, 100, 50, color(255));
     dockTab.addObj(displayNumOfScouter);
   
-  availableMediaList = cp5.addListBox("Available Media:")
-    .setPosition(width-100, 150)
-    .setSize(50, 800)
-    .setItemHeight(50)
-    .setBarHeight(40)
-    .setColorBackground(color(255, 128))
-    .setColorActive(color(0))
-    .setColorForeground(color(0, 100, 255))
-    .setOpen(true)
-    .hide()
-    ;
+  dockTab.addObj(locateAScouter);
+  availableMediaList = cp5.addListBox("Available Media:");
+  
+  availableMediaList.setPosition(width-300, 200);
+  availableMediaList.hide();
+  // a listbox that will let the user select the file they want to view
+  customizeMediaListBox(availableMediaList);
 
-   org.apache.log4j.BasicConfigurator.configure();
-
-  // check the port which your device (modem/dongle) is attached & replace below.
-  sender = new SendSms("modem.com1", "COM14", 19200, "Huawei", "E220", "+17708731155");
 }
-
+///////////////////////////////////////////////////////////////////
+/*                      DRAW FUNCTION                            */ 
+/*This function handles all the sequencing and processing.       */
+/*Any action the app does goes through this function.            */ 
+/*This function is also looped so it is constanly updating       */
+///////////////////////////////////////////////////////////////////
 void draw() {
-
+  //clear the background every time
   background(0);
+  
   if (!eventSelected) {
 
     if (!creatingAnEvent) {
-      monthDDL.hide();
-      dateDDL.hide();
-      yearDDL.hide();
-
       locateEvent.show(true);
       createEvent.show(true);
     } else {
@@ -193,7 +309,7 @@ void draw() {
       }
 
       try {
-        eventSearch.show(search.isSelected()&&(myTeam!=null || yearDDL.getId() != -1));
+        eventSearch.show(search.isSelected()&&(myTeam!=null));
       }
       catch(Exception e) {
       }
@@ -212,7 +328,7 @@ void draw() {
         }
         setMyTeam.show(false);
         eventSearch.show(false);
-        File[] files = listFiles("./");
+        File[] files = listFiles("./data/");
         for (File f : files) {
           if (f.getName().equals(myEvent.getName())) {
             doesEventExist = true;
@@ -221,7 +337,7 @@ void draw() {
         }
 
         if (!doesEventExist) {
-          File dir = new File("./", myEvent.getName());
+          File dir = new File("./data/", myEvent.getName().trim());
           dir.mkdir();
           PrintWriter writer = createWriter(dir+"/eventDetail.txt");
           writer.println("sku : "+myEvent.getSKU());
@@ -259,7 +375,6 @@ void draw() {
 }
 
 void mousePressed() {
-  getDate();
   for (Tab t : allTabs) {
     t.togglePressed();
   }
@@ -280,16 +395,14 @@ void mousePressed() {
   } else {
     eventSearch.show(false);
   }
-  yearDDL.update();
-  monthDDL.update();
-  dateDDL.update();
-  //for (Tab t : allTabs) {
-  //  if (t.isSelected()) {
-  //    for (Drawable d : t.getAllObjs()) {
-  //      d.updateSelected();
-  //    }
-  //  }
-  //}
+
+  for (Tab t : allTabs) {
+    if (t.isSelected()) {
+      for (Drawable d : t.getAllObjs()) {
+        d.updateSelected();
+      }
+    }
+  }
 
   if (search.isSelected()) {
     for (Drawable d : eventButtons) {
@@ -303,6 +416,7 @@ void mousePressed() {
 }
 
 void mouseReleased() {
+  
 }
 
 
@@ -337,6 +451,7 @@ void keyPressed() {
         teamStats.setText(teamSearch.getSearchQuery() + " does not exist");
         setMyTeam.isShown = false;
       }
+      
     }
   }
   if (key == 'j') {
@@ -345,6 +460,9 @@ void keyPressed() {
   }
 }
 
+
+//this function retrieves data from a website in JSON format
+//and stores it as a JSON object
 void requestData() {
   JSONObject json = loadJSONObject("http://time.jsontest.com/");
 }

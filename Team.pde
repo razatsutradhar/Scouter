@@ -15,14 +15,7 @@ class Team {
   ArrayList<Award> allAwards = new ArrayList();
   int timesCovered = 0;
   boolean isOpponent = false;
-  
-  Team(String url, int i){
-    JSONObject js = loadJSONObject(url);
-    try{
-    teamNumber = js.getString("number");
-    println(teamNumber);
-    }catch(Exception e){}
-  }
+
   Team(String allInfo) {
 
     String[] shotgunned = allInfo.replace("\"", "").replace("result:[{", "").split(",");
@@ -54,7 +47,12 @@ class Team {
             robotName = "NULL";
           }
         } else if (ent.get(0).equals("organisation")) {
-          organization = (String)ent.get(1);
+          try {
+            organization = (String)ent.get(1);
+          }
+          catch(Exception e) {
+            organization = "NULL";
+          }
         } else if (ent.get(0).equals("city")) {
           city = (String)ent.get(1);
         } else if (ent.get(0).equals("region")) {
@@ -80,9 +78,11 @@ class Team {
   }
 
   Team(ArrayList<String[]> info) {
+    
     for (String[] s : info) {
       if (s[0].equals("number")) {
         teamNumber = (String)s[1];
+        print(teamNumber+"\t");
       } else if (s[0].equals("program")) {
         program = (String)s[1];
       } else if (s[0].equals("team_name")) {
@@ -95,11 +95,21 @@ class Team {
           robotName = "NULL";
         }
       } else if (s[0].equals("organisation")) {
-        organization = (String)s[1];
+       try {
+            organization = (String)s[0];
+          }
+          catch(Exception e) {
+            organization = "NULL";
+          }
       } else if (s[0].equals("city")) {
         city = (String)s[1];
       } else if (s[0].equals("region")) {
-        region = (String)s[1];
+        try {
+          region = (String)s[1];
+        }
+        catch(Exception e) {
+          region = "NULL";
+        }
       } else if (s[0].equals("country")) {
         country = (String)s[1];
       } else if (s[0].equals("grade")) {

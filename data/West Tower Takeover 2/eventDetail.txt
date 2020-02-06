@@ -1,0 +1,3 @@
+sku : RE-VRC-19-1097
+name : West Tower Takeover 2
+team : 675C

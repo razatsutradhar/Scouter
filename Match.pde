@@ -23,15 +23,14 @@ class Match {
     round = int(arr.get(2)[1]);
     red1 = (Team)myEvent.getMap().get(arr.get(7)[1]);
     red2 = (Team)myEvent.getMap().get(arr.get(8)[1]);
-
+    
     blue1 = (Team)myEvent.getMap().get(arr.get(11)[1]);
     blue2 = (Team)myEvent.getMap().get(arr.get(12)[1]);
-
+    //try{
     playingTeams[0] = red1;
     playingTeams[1] = red2;
     playingTeams[2] = blue1;
     playingTeams[3] = blue2;
-
     r1 = new Button(red1.getTeamNumber(), x, y, w, h, color(255, 100, 100));
     r1.setTeam(red1);
     r2 = new Button(red2.getTeamNumber(), x+160, y, w, h, color(255, 100, 100));
@@ -46,6 +45,16 @@ class Match {
     teamButtons[2] = b1;
     teamButtons[3] = b2;
     
+    try{
+    }catch(Exception e){
+      println("Exception occured in this match: ");
+      for(String[] l : arr){
+       for(String s : l) {
+         print(s + "\t");
+      }
+      println();
+    }
+    }
     for(Button b : teamButtons){
       
     }

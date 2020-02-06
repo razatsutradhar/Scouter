@@ -5,6 +5,7 @@ class Methods {
   void setAsMyTeam() {
     myTeam = searchTeam;
     myTeamTab.rename(myTeam.getTeamNumber());
+    eventSearchButton();
   }
 
   void drawMyTeamTab() {
@@ -30,14 +31,7 @@ class Methods {
   void eventSearchButton() {
     ArrayList<ArrayList<String[]>> events;
     String url = "https://api.vexdb.io/v1/get_events?";
-    if (getDate() != "") {
-      url += "date=" + getDate();
-      if (myTeam!=null) {
-        url+= "&team="+myTeam.getTeamNumber();
-      }
-    } else {
-      url+= "team="+myTeam.getTeamNumber();
-    }
+    url+= "team="+myTeam.getTeamNumber();
     for (Button e : eventButtons) {
       e.show(false);
     }
@@ -96,7 +90,7 @@ class Methods {
     doesEventExist = false;
   }
   void createDuplicateEvent() {
-    File dir = new File("./", myEvent.getName()+"-Duplicate");
+    File dir = new File("./data/", myEvent.getName()+"-Duplicate");
     dir.mkdir();
     PrintWriter writer = createWriter(dir+"/eventDetail.txt");
     writer.println("sku : "+myEvent.getSKU());
@@ -114,14 +108,24 @@ class Methods {
   void teamSelected(Object o) {
     println(((Team)o).getTeamName());
   }
-
+  void showScheduleTab() {
+    if (myEvent.isScoutScheduleCreated) {
+      for (int i = 0; i < myEvent.scoutSchedule.size(); i++) {
+        fill(255);
+        textAlign(LEFT, TOP);
+        text("" + i + ":\t" + myEvent.scoutSchedule.get(i).toString(), 50, 100+100*i);
+        textAlign(CENTER, CENTER);
+      }
+    }
+  }
   void createScoutingSchedule() {
-    myEvent.createSchedule(); 
+    myEvent.createSchedule(); //goes to my event and runs code to create a scouting schedule for the schedule with the given number of scouters
     if (myEvent.scoutScheduleList.size()>0) {
       loadScheduleButton.setColor(color(0, 255, 55));
     } else {
       loadScheduleButton.setColor(color(255, 55, 0));
     }
+    scheduleTab.setActive();
   }
 
   void increaseScouterNumber() {
@@ -136,21 +140,35 @@ class Methods {
       displayNumOfScouter.setText(""+numOfScouters);
     }
   }
+  void createAScouter() {
+    if (!isFileSelectorOpen) {
+      isFileSelectorOpen = true;
+      try {
+        selectFolder("select the phone", "scouterPhoneSelected", new File("../"));
+      }
+      catch(Exception e) {
+        println(e + " - loacting scouter from file");
+        isFileSelectorOpen = false;
+      }
+    }
+  }
 }
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////public static methods//////////////////////////////////////////////////////////
 /*                                                                                                                                                                */
 /*                                                                                                                                                                */
 /*                                                                                                                                                                */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-public static String readURL(String s) {
+public static String readURL(String urlString) {//function takes a URL
   BufferedReader br = null;
   StringBuilder sb = new StringBuilder();
-  try {
-    URL url = new URL(s);
+  try {                                        //we try to access the webpage
+    URL url = new URL(urlString);              //if successful, the webpage will return texts as data
     br = new BufferedReader(new InputStreamReader(url.openStream()));
-    String line;
-    while ((line = br.readLine()) != null) {
+    String line;                               //we read and append those lines of texts 
+    while ((line = br.readLine()) != null) {   //together into one long line and return it
       sb.append(line);
       sb.append(System.lineSeparator());
     }
@@ -161,31 +179,44 @@ public static String readURL(String s) {
 }
 
 public static ArrayList<ArrayList<String[]>> analyze(String s) {
-
-  String finString = s;
-  finString = finString.replace("{", "").replace("result\":", "").replace("[", "")
-    .replace("\"", "").replace("]", "").replace(" number", "number").trim();
+  //create an instance of the text data that we get from the data base
+  String finString = s;          
+  //format the string to remove excess syntax
+  finString = finString.replace("{", "").replace("result\":", "").
+  replace("[", "")    .replace("\"", "").replace("]", "")
+  .replace(" number", "number").trim();
   try {
     finString = finString.substring(finString.indexOf("size"));
   }
   catch(Exception e) {
   }
+  //create an empty array list that we will populate and return
   ArrayList<ArrayList<String[]>> results = new ArrayList();
+  //split for every JSON object
   String[] shotgunned = finString.split("}");
+
   for (String str : shotgunned) {
     ArrayList<String[]> dataEntry = new ArrayList();
+    //for every object, split it apart to 
+    //display the variables and adata
     for (String data : str.split(",")) {
       data.trim();
       dataEntry.add(data.split(":"));
     }
+    //add the entry we retrieved from the database
     results.add(dataEntry);
   }
+  //return the populated arraylist of results
   return results;
 }
 
 public static void readResults(ArrayList<ArrayList<String[]>> c) {
+  //this method takes the list of JSON objects,
   for (ArrayList<String[]> d : c) {
+  //for every object, it gets an array of strings 
+  //formatted as {key, value} which is a variable
     for (String[] e : d) {
+      //for each variable, it will print it out the key and value
       for (String f : e) {
         print(f + " ");
       }
@@ -276,6 +307,20 @@ public void customizeNumberDDL(DropdownList ddl, int start, int end) {
   }
 }
 
+void customizeMediaListBox(ListBox ddl) { 
+  //a convenience function made to customize the mediaListBox used to select videos
+  ddl.setBackgroundColor(color(255));
+  ddl.setItemHeight(30);
+  ddl.setBarHeight(30);
+  ddl.setSize(300, 500);
+  ddl.setColorBackground(color(150));
+  ddl.setColorActive(color(255, 128));
+  ddl.setColorLabel(0);
+  ddl.setColorValueLabel(0); 
+  ddl.getCaptionLabel().setFont(createFont("Calibri", 20));
+  ddl.getValueLabel().setFont(createFont("Calibri", 15));
+}
+
 public static void controlEvent(ControlEvent theEvent) {
   if (theEvent.isGroup()) {
     // check if the Event was triggered from a ControlGroup
@@ -329,21 +374,7 @@ public static String twoDigit(int i) {
     return  ""+i;
   }
 }
-
-public static String getDate() {
-  String result = "";
-
-  if (yearDDL.getId() == 1) {
-    result = ""+yearDDL.getItem((int)yearDDL.getValue()).get("value");   
-    if (monthDDL.getId() != -1) {
-      result += "-"+twoDigit(Integer.parseInt((String)monthDDL.getItem((int)monthDDL.getValue()).get("value").toString()));
-      if (dateDDL.getId() != -1) {
-        result += "-" + twoDigit(Integer.parseInt((String)dateDDL.getItem((int)dateDDL.getValue()).get("value").toString()));
-      }
-    }
-  }
-
-  return result;
+public static void selectPhone() {
 }
 //void scheduleSelected(File selection) {
 //  scheduleAbsolutePath = selection.getAbsolutePath();

@@ -103,7 +103,7 @@ class Tab implements Drawable {
     if (call!=null) {
       try {
         call.invoke(methodBank);
-      }
+      } 
       catch(Exception e) {
       }
     }
@@ -113,5 +113,11 @@ class Tab implements Drawable {
   }
   void rename(String n){
    name =  n;
+  }
+  void setActive(){
+   for(Tab tab : allTabs){
+    tab.active = false; 
+   }
+   active = true;
   }
 }
