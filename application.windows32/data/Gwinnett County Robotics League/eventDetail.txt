@@ -1,0 +1,3 @@
+sku : RE-VRC-19-8542
+name : Gwinnett County Robotics League
+team : 675C

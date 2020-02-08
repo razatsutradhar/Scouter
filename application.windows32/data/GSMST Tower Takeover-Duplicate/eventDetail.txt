@@ -1,0 +1,3 @@
+sku : RE-VRC-19-1075
+name : GSMST Tower Takeover
+team : 675C
