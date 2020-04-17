@@ -1,0 +1,6 @@
+Team : 675D
+Auton : true
+Protected : 8
+Unprotected : 5
+Strength : fielding
+Weakness : resistance agaunst pushing

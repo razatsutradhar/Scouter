@@ -1,0 +1,6 @@
+Team : 675D
+Auton : true
+Protected : 2
+Unprotected : 3
+Strength : strong
+Weakness : weak

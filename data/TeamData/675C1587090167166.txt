@@ -1,0 +1,6 @@
+Team : 675C
+Auton : true
+Protected : 3
+Unprotected : 6
+Strength : gsmst
+Weakness : frvuntd

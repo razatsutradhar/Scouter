@@ -163,7 +163,7 @@ class Event {
     if (matchesGenerated){
       ((Match)(matchList.getItem((int)matchList.getValue())).get("value")).drawMatch();
     }
-    println(isScoutScheduleCreated);
+    //println(isScoutScheduleCreated);
   }
   ArrayList<Team> getOpponents() {
     return allOpponents;

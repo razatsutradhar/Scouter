@@ -28,6 +28,7 @@ class Methods {
 
     println("set event");
   }
+
   void eventSearchButton() {
     ArrayList<ArrayList<String[]>> events;
     String url = "https://api.vexdb.io/v1/get_events?";
@@ -113,7 +114,13 @@ class Methods {
       for (int i = 0; i < myEvent.scoutSchedule.size(); i++) {
         fill(255);
         textAlign(LEFT, TOP);
-        text("" + i + ":\t" + myEvent.scoutSchedule.get(i).toString(), 50, 100+100*i);
+        String scoutMatchAndTeam = "";
+        for (int match : myEvent.scoutSchedule.get(i)) {
+          if (match > 0)
+            scoutMatchAndTeam += match +" "+ myEvent.matches.get(match-1).getAllOpponents().toString() + "\n";
+        }
+        textSize(15);
+        text("" + (i+1) + "\n" + scoutMatchAndTeam, 50+400*(i%3), 100+250*(i/3));
         textAlign(CENTER, CENTER);
       }
     }
@@ -183,8 +190,8 @@ public static ArrayList<ArrayList<String[]>> analyze(String s) {
   String finString = s;          
   //format the string to remove excess syntax
   finString = finString.replace("{", "").replace("result\":", "").
-  replace("[", "")    .replace("\"", "").replace("]", "")
-  .replace(" number", "number").trim();
+    replace("[", "")    .replace("\"", "").replace("]", "")
+    .replace(" number", "number").trim();
   try {
     finString = finString.substring(finString.indexOf("size"));
   }
@@ -213,8 +220,8 @@ public static ArrayList<ArrayList<String[]>> analyze(String s) {
 public static void readResults(ArrayList<ArrayList<String[]>> c) {
   //this method takes the list of JSON objects,
   for (ArrayList<String[]> d : c) {
-  //for every object, it gets an array of strings 
-  //formatted as {key, value} which is a variable
+    //for every object, it gets an array of strings 
+    //formatted as {key, value} which is a variable
     for (String[] e : d) {
       //for each variable, it will print it out the key and value
       for (String f : e) {
@@ -376,6 +383,8 @@ public static String twoDigit(int i) {
 }
 public static void selectPhone() {
 }
+
+
 //void scheduleSelected(File selection) {
 //  scheduleAbsolutePath = selection.getAbsolutePath();
 //  try {

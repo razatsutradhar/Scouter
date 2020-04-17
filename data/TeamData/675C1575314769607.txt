@@ -1,0 +1,6 @@
+Team : 675C
+Auton : true
+Protected : 6
+Unprotected : 9
+Strength : xvj
+Weakness : hjgt

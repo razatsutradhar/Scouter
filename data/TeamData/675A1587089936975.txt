@@ -1,0 +1,6 @@
+Team : 675A
+Auton : true
+Protected : 1
+Unprotected : 8
+Strength : sfgrve
+Weakness : gbrfjf

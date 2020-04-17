@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////
-/*                    Scouter Main                               */ 
+/*                    Scouter Main                               */
 /*This class houses all the void draw and setup function which   */
-/*braches out and works with all the other classes. This is the  */ 
+/*braches out and works with all the other classes. This is the  */
 /*central hub of this entire app                                 */
 ///////////////////////////////////////////////////////////////////
 
@@ -94,12 +94,12 @@ ListBox availableMediaList;
 public ArrayList<File> currentFiles;
 File currentLocation = new File("./");
 ArrayList<Scout> allScouts = new ArrayList();
-
+MediaViewer viewer;
 
 ///////////////////////////////////////////////////////////////////
-/*                    SETUP FUNCTION                             */ 
+/*                    SETUP FUNCTION                             */
 /*This function is in the Main Scouter class and runs once at the*/
-/*beginning of the code. The purpose of this function is to      */ 
+/*beginning of the code. The purpose of this function is to      */
 /*initialize all variables and objects                           */
 ///////////////////////////////////////////////////////////////////
 void setup() {
@@ -107,19 +107,19 @@ void setup() {
   icon = loadImage("logopng.png");
   icon.resize(564, 564);
   surface.setIcon(icon);
-  
+
   //Arraylist of all tabs found on the top edge
   allTabs = new ArrayList();         
-  
+
   //Arraylist of all buttons
   allButtons = new ArrayList();  
-  
+
   //Arraylist of all events a team is registered for
   eventButtons = new ArrayList();
-  
+
   //Initializing a public method object to use all its methods
   methodBank = new Methods();      
-  
+
   //Initializing the imported GUI
   cp5 = new ControlP5(this);         
 
@@ -129,12 +129,12 @@ void setup() {
   search = new Tab("Create an Event", 10);    
 
 
-///////////////////////////////////////////////////////////////////
-/*         SETUP FUNCTION -- TAB INITIALIZATION                  */ 
-/*This function is in the Main Scouter class and runs once at the*/
-/*beginning of the code. The purpose of this function is to      */ 
-/*initialize all variables and objects                           */
-///////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////
+  /*         SETUP FUNCTION -- TAB INITIALIZATION                  */
+  /*This function is in the Main Scouter class and runs once at the*/
+  /*beginning of the code. The purpose of this function is to      */
+  /*initialize all variables and objects                           */
+  ///////////////////////////////////////////////////////////////////
 
   //create and place matches tab, used to see your matches and opponents
   matches = new Tab("Matches", 10);                  
@@ -144,11 +144,11 @@ void setup() {
   scheduleTab = new Tab("Schedules", allTabs.get(allTabs.size()-1).getRightXValue()+5);       
   allTabs.add(scheduleTab);
   setMethod(scheduleTab, "showScheduleTab");
-  
+
   //create and place dock tab, used to import pictures and video from scouting
   Tab dockTab = new Tab("Dock", allTabs.get(allTabs.size()-1).getRightXValue()+5);                        
   allTabs.add(dockTab);
-  
+
   //create and place review tab, used to review teams and review scounting material
   Tab review = new Tab("Review", allTabs.get(allTabs.size()-1).getRightXValue()+5);                    
   allTabs.add(review);
@@ -158,27 +158,27 @@ void setup() {
   allTabs.add(myTeamTab);
   //using the drawMyTeamTab method from methodBank to customize the myTeam tab
   setMethod(myTeamTab, "drawMyTeamTab");                      
-  
-///////////////////////////////////////////////////////////////////
-/*  SETUP FUNCTION -- RANDOM OBJECT INITIALIZATION               */ 
-/*This function is in the Main Scouter class and runs once at the*/
-/*beginning of the code. The purpose of this function is to      */ 
-/*initialize all variables and objects                           */
-///////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////
+  /*  SETUP FUNCTION -- RANDOM OBJECT INITIALIZATION               */
+  /*This function is in the Main Scouter class and runs once at the*/
+  /*beginning of the code. The purpose of this function is to      */
+  /*initialize all variables and objects                           */
+  ///////////////////////////////////////////////////////////////////
 
   //create a search bar to search for a team number
   teamSearch = new SearchBar(50, 100, 170, 30, "Team # + enter", "team_num=");       
   //and nest it in the search tab
   search.addObj(teamSearch);                              
-  
+
   //create a text box for team stats which appears when a valid team 
   //is entered in the team seach bar
   teamStats = new TextBox(50, 260);                     
-  
+
   //add the team stat text box to the search tab
   search.addObj(teamStats);                                                                             
   textAlign(RIGHT, TOP);
-  
+
   //add text above the seach bar saying "Search for a Team"
   search.addObj(new TextBox("Search for a team: (required)", 50, 80));                                            
   textAlign(CENTER, CENTER);
@@ -195,15 +195,15 @@ void setup() {
   //Create a button with the text "Open Existing Event" that will open file explorer
   //and allow the user to select an event they have alreay started
   locateEvent = new Button("Open Existing Event", (width-(2*400))/2-200, 
-  height/2-30, 400, 60, color(255), 20);
+    height/2-30, 400, 60, color(255), 20);
   setMethod(locateEvent, "selectEvent");
 
   //Create a button with the text "Create New Event" that 
   //will let the user select an event they are 
   //registered in and then unlock all the other tabs
   createEvent = new Button("Create New Event", 
-  width-((width-(2*400))/2)-400+100, 
-  height/2-30, 400, 60, color(255), 20);
+    width-((width-(2*400))/2)-400+100, 
+    height/2-30, 400, 60, color(255), 20);
   setMethod(createEvent, "createAnEvent");
   //search.addObj(locateMatchSchedule);
 
@@ -211,25 +211,25 @@ void setup() {
   //that will let the user duplicate an event they have
   //aready started
   createDuplicateEvent = new Button("Create Duplicate Event", 
-  width-((width-(2*400))/2)-400+200, height/2-30, 400, 60, color(255), 20);
+    width-((width-(2*400))/2)-400+200, height/2-30, 400, 60, color(255), 20);
   setMethod(createDuplicateEvent, "createDuplicateEvent");
-  
+
   //create a button that will allow the user to open an existing
   //event if the user tried to create an event that already exists
   openSearchedEvent = new Button("Open Existing Event", 
-  (width-(2*400))/2-200, height/2-30, 400, 60, color(255), 20 );
+    (width-(2*400))/2-200, height/2-30, 400, 60, color(255), 20 );
   setMethod(openSearchedEvent, "selectExistingEvent");
   textAlign(CENTER, CENTER);
-  
+
   //create a button to find the file directory of a scouter
   locateAScouter = new Button("Find Scouter", width/3, 
-  height/3, 400, 60, color(0,180, 30), 20);
+    height/3, 400, 60, color(0, 180, 30), 20);
   setMethod(locateAScouter, "createAScouter");
 
   //create dropdown list that lets the user review their
   //only the matches they will be playing
   matchList = cp5.addListBox("Matches")
-  
+
     //customize the dropdown list with color and sizes below
     .setPosition(50, 100)
     .setSize(400, 500)
@@ -241,56 +241,56 @@ void setup() {
     .setOpen(true)
     .hide()
     ;
-    
+
   //set the fonts of the title and selections of the drop
   //down list
   matchList.getCaptionLabel().setFont(createFont("Calibri", 20));
   matchList.getValueLabel().setFont(createFont("Calibri", 15));
   matches.addControlObj(matchList);
-  
+
   //create a button that invokes a method that identifies 
   //important matches to watch based on your schedule
   loadScheduleButton = new Button("Load Scouting Schedule", 
-  50, 100, 300,30, color(255), 20);
-    setMethod(loadScheduleButton, "createScoutingSchedule");
-    dockTab.addObj(loadScheduleButton);
-    
+    50, 100, 300, 30, color(255), 20);
+  setMethod(loadScheduleButton, "createScoutingSchedule");
+  dockTab.addObj(loadScheduleButton);
+
   //create a button that lets you increase the number of 
   //scouters you have
   addAScouter = new Button("+", 300, 150, 50, 50, color(255), 20);
-    setMethod(addAScouter, "increaseScouterNumber");
-    dockTab.addObj(addAScouter);
-    
+  setMethod(addAScouter, "increaseScouterNumber");
+  dockTab.addObj(addAScouter);
+
   //create a button that lets you increase the number of 
   //scouters you have
   removeAScouter = new Button("-", 50, 150, 50, 50, color(255), 20);
-    setMethod(removeAScouter, "decreaseScouterNumber");
-    dockTab.addObj(removeAScouter);
-  
+  setMethod(removeAScouter, "decreaseScouterNumber");
+  dockTab.addObj(removeAScouter);
+
   //create a text box that displays the number of scouters you have
   displayNumOfScouter = new TextBox(""+numOfScouters, 
-  150, 150, 100, 50, color(255));
-    dockTab.addObj(displayNumOfScouter);
-  
+    150, 150, 100, 50, color(255));
+  dockTab.addObj(displayNumOfScouter);
+
   dockTab.addObj(locateAScouter);
   availableMediaList = cp5.addListBox("Available Media:");
-  
+
   availableMediaList.setPosition(width-300, 200);
   availableMediaList.hide();
   // a listbox that will let the user select the file they want to view
   customizeMediaListBox(availableMediaList);
-
+  viewer = new MediaViewer(600, 150);
+  matches.addObj(viewer);
 }
 ///////////////////////////////////////////////////////////////////
-/*                      DRAW FUNCTION                            */ 
+/*                      DRAW FUNCTION                            */
 /*This function handles all the sequencing and processing.       */
-/*Any action the app does goes through this function.            */ 
+/*Any action the app does goes through this function.            */
 /*This function is also looped so it is constanly updating       */
 ///////////////////////////////////////////////////////////////////
 void draw() {
   //clear the background every time
   background(0);
-  
   if (!eventSelected) {
 
     if (!creatingAnEvent) {
@@ -411,12 +411,11 @@ void mousePressed() {
   }
 
   //println(monthDDL.getValue() + "   " + monthDDL.getItem((int)monthDDL.getValue()).get("value") + "    is updated: " + monthDDL.getId());
-    //sender.sendMessage("+16788337013","Basiaclly made a bot to spam you everytime a press a key. If you are not naveen, I am so sorry");
+  //sender.sendMessage("+16788337013","Basiaclly made a bot to spam you everytime a press a key. If you are not naveen, I am so sorry");
   messageSent = true;
 }
 
 void mouseReleased() {
-  
 }
 
 
@@ -451,7 +450,6 @@ void keyPressed() {
         teamStats.setText(teamSearch.getSearchQuery() + " does not exist");
         setMyTeam.isShown = false;
       }
-      
     }
   }
   if (key == 'j') {

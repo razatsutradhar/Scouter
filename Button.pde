@@ -1,9 +1,10 @@
 import java.lang.reflect.Method; //<>// //<>// //<>//
 class Button implements Drawable {
   Method call;
-
+  
   boolean isSelected;
   boolean isShown = true;
+  boolean isPressed = false;
   String text;
   color c;
   int x;
@@ -32,6 +33,7 @@ class Button implements Drawable {
     this.c = c;
     this.text = text;
     textSize(tSize);
+    methodBank = new Methods();
   }
   Button(String text, int x, int y, int w, int h, color c, int tSize) {
     this.x = x;
@@ -42,13 +44,16 @@ class Button implements Drawable {
     this.text = text;
     this.tSize = tSize;
     textSize(tSize);
+    methodBank = new Methods();
   }
 
   Button() {
+    methodBank = new Methods();
   }
 
   void show(boolean isShown) {
     this.isShown = isShown;
+    isPressed = false;
     if (!mousePressed) {
       isSelected = false;
     } else {
@@ -71,18 +76,19 @@ class Button implements Drawable {
 
       fill(0);
       textSize(tSize);
+      textAlign(CENTER, CENTER);
       text(text, x+w/2, y+h/2);
     }
   }
 
   void updateSelected() {
-
     if (isShown) { 
       if (mouseX > x && mouseX<x+w && mouseY > y && mouseY<y+h) {
         int currentTime = millis();
         if ((currentTime - lastTimeActivated)>300) {
           isSelected = true;
-          // println("button pressed");
+          println("button pressed");
+          isPressed = true;
           if (call !=null) {
             try {
               if (obj==null) {
@@ -95,7 +101,6 @@ class Button implements Drawable {
                 println("invoked setting the event");
                 runMethod();
                 println("finished setting the event");
-                
               }
             }
             catch(Exception e) {
@@ -104,7 +109,7 @@ class Button implements Drawable {
           } else if (t != null) {
             teamButton();
           } else {
-            println("call DNe");
+            //println("call DNe");
             isSelected = false;
           }
           lastTimeActivated = currentTime;
@@ -166,18 +171,25 @@ class Button implements Drawable {
   void teamButton() {
     showMediaAvailableForTeam();
   }
-  void setColor(color c){
-   this.c = c; 
+  void setColor(color c) {
+    this.c = c;
   }
-  void showMediaAvailableForTeam(){
-   if(t == null){
-    println("Error: this button does not have a team linked to it");
-   }else{
-    println(t.getTeamNumber());
-    availableMediaList.clear();
-    for(File f : listFiles("./data/VideoData"))
-      println(f.getName());
-    availableMediaList.show(); 
-   }
+  boolean isPressed(){
+   return isPressed;
+  }
+  void showMediaAvailableForTeam() {
+    if (t == null) {
+      println("Error: this button does not have a team linked to it");
+    } else {
+      viewer.clearMedia();
+      viewer.setTeam(t.getTeamNumber().toUpperCase());
+      println(t.getTeamNumber());
+      for (File f : listFiles("./data/TeamData")) {
+        if (f.getName().toLowerCase().contains(t.getTeamNumber().toLowerCase())) {
+          viewer.add(f);
+        }
+      }
+      viewer.parseAllTextFiles();
+    }
   }
 }

@@ -25,6 +25,7 @@ class Tab implements Drawable {
       rect(x, 10, pX-x, 45);
 
       textSize(20);
+      textAlign(CENTER,CENTER);
       fill(0);
       text(name, x+(pX-x)/2, y-10);
 
